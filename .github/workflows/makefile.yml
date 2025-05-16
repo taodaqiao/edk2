@@ -1,0 +1,28 @@
+name: Clone and Compress edk2
+
+on:
+  workflow_dispatch:
+
+jobs:
+  compress-edk2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v3
+
+      - name: Clone edk2 repository with submodules
+        run: |
+          git clone https://github.com/tianocore/edk2.git
+          cd edk2
+          git submodule update --init --recursive
+          cd ..
+
+      - name: Compress edk2 directory
+        run: |
+          tar -czf edk2.tar.gz edk2
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: edk2-archive
+          path: edk2.tar.gz
