@@ -1,16 +1,28 @@
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: edk2-package
-          name: edk2 Package
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+name: Clone and Compress edk2
 
-      - name: Upload Release Asset
-        uses: softprops/action-gh-release@v1
+on:
+  workflow_dispatch:
+
+jobs:
+  compress-edk2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v3
+
+      - name: Clone edk2 repository with submodules
+        run: |
+          git clone https://github.com/tianocore/edk2.git
+          cd edk2
+          git submodule update --init --recursive
+          cd ..
+
+      - name: Compress edk2 directory
+        run: |
+          tar -czf edk2.tar.gz edk2
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
         with:
-          files: edk2-full.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: edk2-archive
+          path: edk2.tar.gz
