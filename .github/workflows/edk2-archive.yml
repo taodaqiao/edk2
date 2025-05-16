@@ -1,24 +1,27 @@
-name: Clone and Package edk2
+name: EDK2 Repository Packager
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # 允许手动触发
 
 jobs:
   package-edk2:
     runs-on: ubuntu-latest
     steps:
-      - name: Clone edk2 repository
+      - name: Checkout current repository
+        uses: actions/checkout@v4  # 检出当前仓库（空仓库也需要此步骤）
+
+      - name: Clone EDK2 Repository
         run: |
-          git clone https://github.com/tianocore/edk2.git
+          git clone --depth 1 --progress https://github.com/tianocore/edk2.git
           cd edk2
-          git submodule update --init
+          git submodule update --init --recursive
 
-      - name: Compress edk2 directory
+      - name: Zip EDK2 Repository
         run: |
-          tar -czf edk2.tar.gz edk2
+          zip -r edk2-with-submodules.zip edk2/
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: edk2-archive
-          path: edk2.tar.gz
+          name: edk2-full
+          path: edk2-with-submodules.zip
