@@ -1,0 +1,16 @@
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: edk2-package
+          name: edk2 Package
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: edk2-full.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
